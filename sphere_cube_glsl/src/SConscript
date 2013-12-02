@@ -79,7 +79,7 @@ if operating_system == 'Darwin':
 env.Program(
     os.path.join(
         main_path,
-        'solarsystem'
+        'sphere_cube_glsl'
     ),
     file_list,
     LIBS=libs

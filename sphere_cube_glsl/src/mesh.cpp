@@ -181,7 +181,7 @@ bool Mesh::InitMaterials(const aiScene* pScene, const std::string& strFilename)
 
         if (!m_vecTextures[i])
         {
-            m_vecTextures[i] = new Texture(GL_TEXTURE_2D, "./data/white.png");
+            m_vecTextures[i] = new Texture(GL_TEXTURE_2D, "./data/textures/white.png");
 
             bIsInitialized = m_vecTextures[i]->Load();
         }
