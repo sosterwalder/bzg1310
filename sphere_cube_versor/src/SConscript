@@ -1,0 +1,94 @@
+import os
+import platform
+
+Import('main_path')
+
+operating_system = platform.system()
+
+if operating_system == 'Darwin':
+    libs = [
+        'vsr'
+    ]
+else:
+    libs = [
+        'vsr',
+        'GLV',
+        'GLEW',
+        'GLU',
+        'GL',
+        'glut'
+    ]
+
+file_list = [
+	Glob('*.cpp')
+]
+
+lib_path = [
+    os.path.join(
+        main_path,
+        'lib'
+    )
+]
+
+include_dirs = [
+    os.path.join(
+        main_path,
+        'include'
+    ),
+    os.path.join(
+        main_path,
+        os.path.join(
+            'include',
+            'vsr'
+        )
+    )
+]
+
+flags = [
+	'-std=c++11',
+	'-Wall'
+]
+
+link_flags = [
+]
+
+defines = [
+]
+
+if ARGUMENTS.get('debug', 0):
+	flags.extend(['-g'])
+else:
+	flags.extend(['-O3'])
+
+
+env = Environment(
+    CPPPATH = include_dirs,
+	CCFLAGS = flags,
+    CPPDEFINES = defines,
+    ENV = {
+        'PATH' : os.environ['PATH'],
+        'TERM' : os.environ['TERM'],
+        'HOME' : os.environ['HOME']
+    }
+)
+
+if operating_system == 'Darwin':
+    env.Append(
+        RPATH = '/usr/local/lib'
+    )
+    env.Append(
+        LINKFLAGS = link_flags
+    )
+
+env.Program(
+    os.path.join(
+        main_path,
+        os.path.join(
+            'bin',
+            'sphere_cube_vsr'
+        )
+    ),
+    file_list,
+    LIBS=libs,
+    LIBPATH=lib_path
+)
