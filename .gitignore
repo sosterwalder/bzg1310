@@ -16,12 +16,10 @@
 
 # Compiled Dynamic libraries
 *.so
-*.dylib
 
 # Compiled Static libraries
 *.lai
 *.la
-*.a
 
 # Binaries
 sphere_cube_vsr
@@ -30,3 +28,6 @@ sphere_cube_glsl
 
 # libvsr 2 project files
 vsr2.0
+=======
+sphere_cube_glsl/bin/sphersphere_cube_glsl
+sphere_cube_versor/bin/sphere_cube_versor
