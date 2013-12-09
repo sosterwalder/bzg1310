@@ -1,3 +1,8 @@
+# Temp files
+*.swo
+*.swp
+.DS_Store
+
 # Rope
 .ropeproject
 
@@ -19,4 +24,5 @@
 *.a
 
 # Binaries
+sphere_cube_df
 sphere_cube_glsl
