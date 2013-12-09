@@ -24,5 +24,6 @@
 *.a
 
 # Binaries
+sphere_cube_vsr
 sphere_cube_df
 sphere_cube_glsl
