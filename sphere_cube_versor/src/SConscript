@@ -34,13 +34,6 @@ include_dirs = [
     os.path.join(
         main_path,
         'include'
-    ),
-    os.path.join(
-        main_path,
-        os.path.join(
-            'include',
-            'vsr'
-        )
     )
 ]
 
@@ -55,6 +48,16 @@ link_flags = [
 defines = [
 ]
 
+general_options = [
+    '-isystem{0}'.format(
+        os.path.join(
+            'include',
+            'vsr'
+        )
+    )
+
+]
+
 if ARGUMENTS.get('debug', 0):
 	flags.extend(['-g'])
 else:
@@ -64,6 +67,7 @@ else:
 env = Environment(
     CPPPATH = include_dirs,
 	CCFLAGS = flags,
+    CXXFLAGS = general_options,
     CPPDEFINES = defines,
     ENV = {
         'PATH' : os.environ['PATH'],
