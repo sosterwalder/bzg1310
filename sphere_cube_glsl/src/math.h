@@ -147,6 +147,11 @@ public:
         return Ret;
     }
 
+    inline float* operator[](int index)
+    {
+        return m[index];
+    }
+
     void InitScaleTransform(float ScaleX, float ScaleY, float ScaleZ);
     void InitRotateTransform(float RotateX, float RotateY, float RotateZ);
     void InitTranslationTransform(float x, float y, float z);
