@@ -15,8 +15,8 @@ class Framework
             m_pCamera                               = nullptr;
             m_pWindow                               = nullptr;
        
-            m_directionalLight.Color                = Vector3f(0.2f, 0.2f, 0.4f);
-            m_directionalLight.AmbientIntensity     = 0.7f;
+            m_directionalLight.Color                = Vector3f(0.2f, 0.2f, 0.2f);
+            m_directionalLight.AmbientIntensity     = 0.4f;
             m_directionalLight.DiffuseIntensity     = 0.21f;
             m_directionalLight.Direction            = Vector3f(1.0f, -1.0, 0.0);
             
@@ -110,6 +110,8 @@ class Framework
         {
             PointLight pl[2];
             SpotLight sl[2];
+            Matrix4f mat4Positions1 = Matrix4f();
+            Matrix4f mat4Positions2 = Matrix4f();
 
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glFrontFace(GL_CW);
@@ -119,9 +121,36 @@ class Framework
             glDisable(GL_LIGHTING);
             m_bIsRunning = true;
 
+            mat4Positions1.InitIdentity();
+            mat4Positions1[0][0] = -1.0f;
+            mat4Positions1[0][1] = 1.0f;
+            mat4Positions1[0][2] = -1.0f;
+            mat4Positions1[1][0] = 1.0f;
+            mat4Positions1[1][1] = 1.0f;
+            mat4Positions1[1][2] = -1.0f;
+            mat4Positions1[2][0] = 1.0f;
+            mat4Positions1[2][1] = 1.0f;
+            mat4Positions1[2][2] = 1.0f;
+            mat4Positions1[3][0] = -1.0f;
+            mat4Positions1[3][1] = 1.0f;
+            mat4Positions1[3][2] = 1.0f;
+
+            mat4Positions2.InitIdentity();
+            mat4Positions2[0][0] = -1.0f;
+            mat4Positions2[0][1] = -1.0f;
+            mat4Positions2[0][2] = -1.0f;
+            mat4Positions2[1][0] = 1.0f;
+            mat4Positions2[1][1] = -1.0f;
+            mat4Positions2[1][2] = -1.0f;
+            mat4Positions2[2][0] = 1.0f;
+            mat4Positions2[2][1] = -1.0f;
+            mat4Positions2[2][2] = 1.0f;
+            mat4Positions2[3][0] = -1.0f;
+            mat4Positions2[3][1] = -1.0f;
+            mat4Positions2[3][2] = 1.0f;
 
             while (m_bIsRunning) {
-                float fRotation = (float)glfwGetTime() * 50.0f;
+                float fRotation = 60.0f;//(float)glfwGetTime() * 50.0f;
 
                 m_pCamera->OnRender();
 
@@ -143,12 +172,12 @@ class Framework
                 m_pEffect->SetPointLights(2, pl);
 
                 // First spot light
-                sl[0].DiffuseIntensity = 0.9f;
-                sl[0].Color = Vector3f(0.0f, 1.0f, 2.0f);
-                sl[0].Position = m_pCamera->GetPosition();
+                sl[0].DiffuseIntensity = 0.1f;
+                sl[0].Color = Vector3f(1.0f, 1.0f, 2.0f);
+                sl[0].Position = Vector3f(0.5f, 0.0f, -7.0f);
                 sl[0].Direction = m_pCamera->GetTarget();
-                sl[0].Attenuation.Linear = 0.1f;
-                sl[0].Cutoff = 10.0f;
+                sl[0].Attenuation.Linear = 0.2f;
+                sl[0].Cutoff = 90.0f;
 
                 // Second spot light
                 sl[1].DiffuseIntensity = 0.75f;
@@ -189,13 +218,13 @@ class Framework
 
                 // Cuboid
                 vec3Pos = Vector3f(0.0f, 0.0f, 0.0f);
-                vec3Rot = Vector3f(0.0f, 0.0f, 0.0f);
+                vec3Rot = Vector3f(0.0f, fRotation, fRotation);
                 mat4Scale.InitScaleTransform(
                     1.0f,
                     1.0f,
                     1.0f
                 );
-                this->RenderMesh(p, m_pCube, vec3Pos, vec3Rot, mat4Scale);
+                Matrix4f mat4CuboidWorldMatrix = this->RenderMesh(p, m_pCube, vec3Pos, vec3Rot, mat4Scale);
 
                 // Re-set scaling for spheres
                 mat4Scale.InitScaleTransform(
@@ -204,46 +233,36 @@ class Framework
                     0.4f
                 ); 
 
-                // First sphere
-                vec3Pos = Vector3f(-1.0f, 1.0f, -1.0f);
-                vec3Rot = Vector3f(0.0f, (fRotation * 3.0f) * (-1), 0.0f);
-                this->RenderMesh(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale);
+                Matrix4f mat4LocalRotation = Matrix4f();
+                mat4LocalRotation.InitIdentity();
+
+                //std::cout << fRotation<< std::endl;
+
+                // Render spheres
+                for (int i = 0; i < 4; i++) {
+                    mat4LocalRotation.InitRotateTransform(
+                        0.0f,
+                        0.0f,
+                        fRotation * 0.1f
+                    );
+                    vec3Pos = Vector3f(
+                        mat4Positions1[i][0],
+                        mat4Positions1[i][1],
+                        mat4Positions1[i][2]
+                    );
+                    vec3Rot = Vector3f(0.0f, 0.0f, 0.0f);
+                    this->RenderMeshAroundPivot(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale, mat4CuboidWorldMatrix, mat4LocalRotation);
+                }
+                for (int i = 0; i < 4; i++) {
+                    vec3Pos = Vector3f(
+                        mat4Positions2[i][0],
+                        mat4Positions2[i][1],
+                        mat4Positions2[i][2]
+                    );
+                    vec3Rot = Vector3f(0.0f, 0.0f, 0.0f);
+                    this->RenderMeshAroundPivot(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale, mat4CuboidWorldMatrix, mat4LocalRotation);
+                }
                 
-                // Second sphere
-                vec3Pos = Vector3f(1.0f, 1.0f, -1.0f);
-                vec3Rot = Vector3f(0.0f, (fRotation * 3.0f) * (-1), 0.0f);
-                this->RenderMesh(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale);
-
-                // Third sphere
-                vec3Pos = Vector3f(1.0f, 1.0f, 1.0f);
-                vec3Rot = Vector3f(0.0f, (fRotation * 3.0f) * (-1), 0.0f);
-                this->RenderMesh(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale);
-
-                // Fourth sphere
-                vec3Pos = Vector3f(-1.0f, 1.0f, 1.0f);
-                vec3Rot = Vector3f(0.0f, (fRotation * 3.0f) * (-1), 0.0f);
-                this->RenderMesh(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale);
-
-                // Fifth sphere
-                vec3Pos = Vector3f(-1.0f, -1.0f, -1.0f);
-                vec3Rot = Vector3f(0.0f, (fRotation * 3.0f) * (-1), 0.0f);
-                this->RenderMesh(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale);
-
-                // Sixth sphere
-                vec3Pos = Vector3f(1.0f, -1.0f, -1.0f);
-                vec3Rot = Vector3f(0.0f, (fRotation * 3.0f) * (-1), 0.0f);
-                this->RenderMesh(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale);
-                
-                // Seventh sphere
-                vec3Pos = Vector3f(1.0f, -1.0f, 1.0f);
-                vec3Rot = Vector3f(0.0f, (fRotation * 3.0f) * (-1), 0.0f);
-                this->RenderMesh(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale);
-                
-                // Eighth sphere
-                vec3Pos = Vector3f(-1.0f, -1.0f, 1.0f);
-                vec3Rot = Vector3f(0.0f, (fRotation * 3.0f) * (-1), 0.0f);
-                this->RenderMesh(p, m_pSphere, vec3Pos, vec3Rot, mat4Scale);
-
                 glfwSwapBuffers(m_pWindow);
                 glfwPollEvents();
             }
@@ -285,7 +304,7 @@ class Framework
             }
         }
 
-        void RenderMesh(Pipeline p, Mesh* pMesh, const Vector3f& vec3Position, const Vector3f& vec3Rotation, const Matrix4f& mat4Scale)
+        Matrix4f RenderMesh(Pipeline p, Mesh* pMesh, const Vector3f& vec3Position, const Vector3f& vec3Rotation, const Matrix4f& mat4Scale)
         {
             p.SetWorldPosition(vec3Position.x, vec3Position.y, vec3Position.z);
             p.SetRotation(vec3Rotation.x, vec3Rotation.y, vec3Rotation.z);
@@ -294,6 +313,22 @@ class Framework
             m_pEffect->SetWorldMatrix(mat4WorldTransformation * mat4Scale);
 
             Matrix4f mat4WorldPerspectiveTransformation = p.GetWorldPerspectiveTransformation(mat4WorldTransformation);
+            m_pEffect->SetWVP(mat4WorldPerspectiveTransformation * mat4Scale);
+
+            pMesh->Render();
+
+            return mat4WorldTransformation;
+        }
+        
+        void RenderMeshAroundPivot(Pipeline p, Mesh* pMesh, const Vector3f& vec3Position, const Vector3f& vec3Rotation, const Matrix4f& mat4Scale, const Matrix4f& mat4Pivot, const Matrix4f& mat4LocalRotation)
+        {
+            p.SetWorldPosition(vec3Position.x, vec3Position.y, vec3Position.z);
+            p.SetRotation(vec3Rotation.x, vec3Rotation.y, vec3Rotation.z);
+
+            Matrix4f mat4WorldTransformation = p.GetWorldTransformationAroundPivot(mat4Pivot);
+            m_pEffect->SetWorldMatrix(mat4WorldTransformation * mat4Scale);
+
+            Matrix4f mat4WorldPerspectiveTransformation = p.GetWorldPerspectiveTransformation(mat4WorldTransformation * mat4LocalRotation);
             m_pEffect->SetWVP(mat4WorldPerspectiveTransformation * mat4Scale);
 
             pMesh->Render();
