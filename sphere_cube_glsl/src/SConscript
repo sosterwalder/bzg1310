@@ -79,7 +79,10 @@ if operating_system == 'Darwin':
 env.Program(
     os.path.join(
         main_path,
-        'sphere_cube_glsl'
+        os.path.join(
+            'bin',
+            'sphere_cube_glsl'
+        )
     ),
     file_list,
     LIBS=libs
