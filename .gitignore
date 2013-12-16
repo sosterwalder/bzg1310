@@ -22,12 +22,90 @@
 *.la
 
 # Binaries
-sphere_cube_vsr
-sphere_cube_df
-sphere_cube_glsl
+bin/sphere_cube_vsr
+bin/sphere_cube_df
+bin/sphere_cube_glsl
 
 # libvsr 2 project files
 vsr2.0
-=======
-sphere_cube_glsl/bin/sphersphere_cube_glsl
-sphere_cube_versor/bin/sphere_cube_versor
+
+# TeX
+
+## Core latex/pdflatex auxiliary files:
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+
+## Intermediate documents:
+*.dvi
+# these rules might exclude image files for figures etc.
+# *.ps
+# *.eps
+# *.pdf
+
+## Bibliography auxiliary files (bibtex/biblatex/biber):
+*.bbl
+*.bcf
+*.blg
+*-blx.aux
+*-blx.bib
+*.run.xml
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex.gz
+*.pdfsync
+
+## Auxiliary and intermediate files from other packages:
+
+# algorithms
+*.alg
+*.loa
+
+# amsthm
+*.thm
+
+# beamer
+*.nav
+*.snm
+*.vrb
+
+# glossaries
+*.acn
+*.acr
+*.glg
+*.glo
+*.gls
+
+# hyperref
+*.brf
+
+# listings
+*.lol
+
+# makeidx
+*.idx
+*.ilg
+*.ind
+*.ist
+
+# minitoc
+*.maf
+*.mtc
+*.mtc0
+
+# minted
+*.pyg
+
+# nomencl
+*.nlo
+
+# todonotes
+*.tdo
+
+# xindy
+*.xdy
