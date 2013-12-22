@@ -22,9 +22,9 @@
 *.la
 
 # Binaries
-bin/sphere_cube_vsr
-bin/sphere_cube_df
-bin/sphere_cube_glsl
+*/bin/sphere_cube_vsr
+*/bin/sphere_cube_df
+*/bin/sphere_cube_glsl
 
 # libvsr 2 project files
 vsr2.0
