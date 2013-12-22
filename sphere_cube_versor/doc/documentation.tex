@@ -1,0 +1,92 @@
+\documentclass[pdftex,12pt,a4paper]{article}
+
+\usepackage[pdftex]{graphicx}
+\usepackage{paralist}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage[xindy]{glossaries}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\input{./glossaries.tex}
+\makeglossaries
+
+
+\begin{document}
+\input{./title.tex}
+
+\newpage
+
+\section{Management summary}
+
+This dissertation is part of a project in the context of the subject \textit{BZG1310: Object-oriented geometry} at Bern University of Applied Sciences.
+\\
+\\
+The goal of this project is the implementation of a rotating cube which has a sphere on each edge using \gls{geometric algebra} within the field of computer graphics.
+\\
+\\
+The goal could be reached and the task was implemented using C++ and \gls{Versor (libvsr)}.\\
+\\
+\begin{figure}[htbp]
+\centering \rotatebox{0}{\scalebox{0.2}[0.2]{\includegraphics{screenshot.png}}}
+\caption{Screenshot of the running application \label{fig:screenshot}}
+\end{figure}
+
+\section{Implementation}
+
+The implementation was done using C++ and the Versor library.
+
+\subsection{Versor library}
+
+To cover the main tasks such as providing minimal application logic or handling input the Versor library was used.\\
+The library provides drawing routines using an external library called \gls{GFX} based upon \gls{OpenGL} as well as a GUI using another external library called \gls{GLV}.
+\newpage
+
+\subsection{Geometric operations}
+
+As the geometric operations are the main aspect of the course BZG1310, this section shows how this aspect was realized within the application.\\
+\\
+For drawing the cube two methods were implemented:
+\begin{compactitem}
+	\item One using the \textit{NCube} class built-in in Versor
+	\item One using lines
+\end{compactitem}
+\vspace*{2mm}
+\noindent\hspace*{0mm}The method using the \textit{NCube} class has the advantage that the lines are finite, therefore they begin and end at certain, defined points in space.\\
+When using lines there remains the problem that the lines do not end, given the implementation in Versor:\vspace*{5mm}\\
+\noindent\hspace*{10mm}\vspace*{5mm} $ a \wedge b \wedge Inf(1) $
+
+\subsubsection{Rotations}
+Versor provides two methods to implement rotations:\\
+\begin{compactitem}
+	\item Using the \textit{rot()} method on objects
+	\item Using generators
+\end{compactitem}
+\vspace*{2mm}
+\noindent\hspace*{0mm}In this project only the first method was used to apply rotations. The rotations were realized using a \gls{bivector} whose coordinates are based on a timer object:\vspace*{5mm}\\
+\noindent\hspace*{10mm}\vspace*{5mm} $ bivRotation = Biv(sinf(fTime * 0.001f), 0, cosf(fTime * 0.001f)); $\\
+\noindent\hspace*{0mm}This bivector is then applied to each vector which defines the coordinates of a sphere respectively the edges of the cube:\vspace*{5mm}\\
+\noindent\hspace*{10mm}\vspace*{5mm} $ Ro::sphere(Vec(-0.5, 0.5, -0.5).rot(bivRotation), fSphereRadius); $\\
+\noindent\hspace*{10mm}\vspace*{5mm} $  Fl::line(topLeftBack.rot(bivRotation), topRightBack.rot(bivRotation)); $\\
+\noindent\hspace*{10mm}$ gfx::Glyph::Line(\\
+	\noindent\hspace*{15mm}vecCube[edge.a].rot(bivRotation),\\
+	\noindent\hspace*{15mm}vecCube[edge.b].rot(bivRotation)\\
+\noindent\hspace*{10mm}); $\\
+\noindent\hspace*{0mm}To provide a rotation for the spheres along their own axis resp. axes quite a lot of effort was made to realize this with operations within geometric algebra - sadly without any good results.\\
+Versor always seem to need an offset for applying rotations, therefore a rotation with the basis $ Vec(0, 0, 0) $ will not work. Neither when a translation is applied before or afterwards.\\
+To achieve a rotation of the spheres along their own axes, a similar approach as used in the \textit{GFX} library was used: Direct usage of the OpenGL command \textit{glRotatef}.\\
+This is not very sophisticated nor are operations from geometric algebra used but there seems currently no other way to achieve the task.
+
+\section{Conclusion}
+The \textit{Versor} library seems to provide a quick way for making use of geometric algebra to realize graphical applications.\\
+Nevertheless I personally think that the implementation or maybe even the subject is in a rather early stage for being a replacement for the conventional and yet used methods.\\
+\\
+The library seems not to be up-to-date concerning the rendering as it makes use of conventional render methods such als \textit{glVertex3f} and even \gls{GLUT}.\\
+Furthermore I think it would rather be hard or even impossible (at least at the moment) to implement things as for example \gls{cube mapping}.\\
+\\
+At the end all gets realized using conventional methods within OpenGL. In my humble opinion it will provide an advantage to the currently used methods if the hardware supports it as well.\\
+All in all it was an interesting experience on a not so explored subject.
+
+\printglossary[numberedsection]
+
+\end{document}
