@@ -150,7 +150,7 @@ class Framework
             mat4Positions2[3][2] = 1.0f;
 
             while (m_bIsRunning) {
-                float fRotation = 60.0f;//(float)glfwGetTime() * 50.0f;
+                float fRotation = (float)glfwGetTime() * 50.0f;
 
                 m_pCamera->OnRender();
 
