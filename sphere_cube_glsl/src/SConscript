@@ -5,6 +5,16 @@ Import('main_path')
 
 operating_system = platform.system()
 
+
+import os
+num_cpu = int(os.environ.get('NUM_CPU', 2))
+SetOption('num_jobs', num_cpu)
+print "running with -j", GetOption('num_jobs')
+
+cxx = [
+    'clang++'
+]
+
 if operating_system == 'Darwin':
     libs = [
         'GLEW',
@@ -61,6 +71,7 @@ env = Environment(
     CPPPATH = include_dirs,
 	CCFLAGS = flags,
     CPPDEFINES = defines,
+    CXX = cxx,
     ENV = {
         'PATH' : os.environ['PATH'],
         'TERM' : os.environ['TERM'],
